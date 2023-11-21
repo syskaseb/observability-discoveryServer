@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+  eureka-server:
+    build:
+      context: ${HOME}/IdeaProjects/evaluation/discovery/discoveryServer
+    ports:
+      - "8761:8761"
+
+  eureka-client:
+    build:
+      context: ${HOME}/IdeaProjects/evaluation/discovery/discoveryClient
+    environment:
+      - EUREKA_URI=http://eureka-server:8761/eureka
+    depends_on:
+      - eureka-server
+    deploy:
+      replicas: 3
+
+  feign-client:
+    build:
+      context: ${HOME}/IdeaProjects/evaluation/discovery/feign
+    environment:
+      - EUREKA_URI=http://eureka-server:8761/eureka
+    depends_on:
+      - eureka-client
+    ports:
+      - "8082:8082"
