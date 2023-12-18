@@ -1,4 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <configuration>
+
+    <property name="json_pattern" value='
+        {
+            "service": {
+                "name": "${spring.application.name:-UNKNOWN}",
+                "version": "${service.version:-UNKNOWN}",
+                "ip": "${HOSTNAME:-UNKNOWN}",
+                "port": "${service.port:-UNKNOWN}",
+                "environment": "${environment.name:-UNKNOWN}"
+            },
+            "request": {
+                "method": "%X{request_method:-UNKNOWN}",
+                "uri": "%X{request_uri:-UNKNOWN}",
+                "clientIp": "%X{request_client_ip:-UNKNOWN}",
+                "id": "%X{request_id:-UNKNOWN}",
+                "sourceSystem": "%X{request_source_system:-UNKNOWN}"
+            },
+            "dd": {
+                "trace_id": "%X{dd.trace_id:-UNKNOWN}",
+                "span_id": "%X{dd.span_id:-UNKNOWN}"
+            },
+            "message": "%msg",
+            "timestamp": "%d{HH:mm:ss.SSS}",
+            "thread": "[%thread]",
+            "logLevel": "%-5level",
+            "loggerName": "%logger{36}"
+        }'
+    />
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
@@ -20,8 +49,10 @@
     </appender>
 
     <appender name="KAFKA" class="com.github.danielwegener.logback.kafka.KafkaAppender">
-        <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="ch.qos.logback.classic.PatternLayout">
+                <pattern>${json_pattern}</pattern>
+            </layout>
         </encoder>
         <topic>eureka-server-logs</topic>
         <keyingStrategy class="com.github.danielwegener.logback.kafka.keying.NoKeyKeyingStrategy"/>
@@ -31,7 +62,7 @@
         <!-- <partition>0</partition> -->
 
         <!-- Optional parameter to include log timestamps into the kafka message -->
-        <appendTimestamp>true</appendTimestamp>
+<!--        <appendTimestamp>true</appendTimestamp>-->
 
         <!-- each <producerConfig> translates to regular kafka-client config (format: key=value) -->
         <!-- producer configs are documented here: https://kafka.apache.org/documentation.html#newproducerconfigs -->

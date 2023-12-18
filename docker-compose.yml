@@ -6,6 +6,8 @@ services:
       context: ${HOME}/IdeaProjects/evaluation/discovery/discoveryServer
     ports:
       - "8761:8761"
+    volumes:
+      - maven-repo:/root/.m2/repository
 
   eureka-client:
     build:
@@ -16,6 +18,8 @@ services:
       - eureka-server
     deploy:
       replicas: 3
+    volumes:
+      - maven-repo:/root/.m2/repository
 
   feign-client:
     build:
@@ -26,6 +30,8 @@ services:
       - eureka-client
     ports:
       - "8079:8079"
+    volumes:
+      - maven-repo:/root/.m2/repository
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.2
@@ -131,6 +137,18 @@ services:
           kafka {
             bootstrap_servers => "broker:29092"
             topics => ["eureka-server-logs", "eureka-client-logs", "feign-client-logs"]
+            codec => json
+          }
+        }
+        filter {
+          if [message] =~ /^\{.*\}$/ {
+            json {
+              source => "message"
+            }
+          } else {
+            mutate {
+              add_field => { "parse_failure" => "true" }
+            }
           }
         }
         output {
@@ -172,6 +190,7 @@ services:
       - elasticsearch
 
 volumes:
+  maven-repo:
   zookeeper-data:
   zookeeper-logs:
   kafka-data:
