@@ -13,9 +13,13 @@ services:
     build:
       context: ${HOME}/IdeaProjects/evaluation/discovery/discoveryClient
     environment:
-      - EUREKA_URI=http://eureka-server:8761/eureka
+      EUREKA_URI: http://eureka-server:8761/eureka
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     depends_on:
       - eureka-server
+      - postgres
     deploy:
       replicas: 3
     volumes:
@@ -32,6 +36,19 @@ services:
       - "8079:8079"
     volumes:
       - maven-repo:/root/.m2/repository
+
+  postgres:
+    image: postgres:15.5
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./postgresql.conf:/var/lib/postgresql/data/postgresql.conf
+      - ./pg_hba.conf:/var/lib/postgresql/data/pg_hba.conf
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.2
@@ -191,6 +208,7 @@ services:
 
 volumes:
   maven-repo:
+  postgres-data:
   zookeeper-data:
   zookeeper-logs:
   kafka-data:
