@@ -50,6 +50,34 @@ services:
       - ./postgresql.conf:/var/lib/postgresql/data/postgresql.conf
       - ./pg_hba.conf:/var/lib/postgresql/data/pg_hba.conf
 
+  redis:
+    image: redis:7.2
+    ports:
+      - "6379:6379"
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb-data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+
+  neo4j:
+    image: neo4j:5.16.0-community-bullseye
+    environment:
+      NEO4J_AUTH: ${NEO4J_AUTH}
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      - neo4j-data:/data
+      - neo4j-logs:/logs
+      - neo4j-import:/var/lib/neo4j/import
+      - neo4j-plugins:/plugins
+
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.2
     hostname: zookeeper
@@ -209,6 +237,11 @@ services:
 volumes:
   maven-repo:
   postgres-data:
+  mongodb-data:
+  neo4j-data:
+  neo4j-logs:
+  neo4j-import:
+  neo4j-plugins:
   zookeeper-data:
   zookeeper-logs:
   kafka-data:
