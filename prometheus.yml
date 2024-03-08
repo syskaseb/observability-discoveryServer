@@ -1,0 +1,18 @@
+global:
+  scrape_interval: 3s  # By default, scrape targets every 15 seconds.
+
+scrape_configs:
+  - job_name: 'eureka-server'
+    static_configs:
+      - targets: ['eureka-server:8761']
+
+  - job_name: 'feign-client'
+    static_configs:
+      - targets: ['feign-client:8079']
+
+  # Example for eureka-client with a placeholder for dynamic discovery or known ports.
+  # In a real scenario, this would require an external mechanism to dynamically update
+  # the targets based on service discovery in Eureka or a predefined port for metrics.
+  - job_name: 'eureka-client'
+    static_configs:
+      - targets: ['host.docker.internal:9464']

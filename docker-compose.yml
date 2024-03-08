@@ -78,6 +78,31 @@ services:
       - neo4j-import:/var/lib/neo4j/import
       - neo4j-plugins:/plugins
 
+  zipkin:
+    image: openzipkin/zipkin:3.0
+    ports:
+      - "9411:9411"
+    volumes:
+      - zipkin-data:/data
+
+  prometheus:
+    image: prom/prometheus:v2.49.1
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    ports:
+      - "9090:9090"
+
+  grafana:
+    image: grafana/grafana:10.3.1
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GF_SECURITY_ADMIN_PASSWORD}
+      GF_USERS_ALLOW_SIGN_UP: false
+    volumes:
+      - grafana-data:/var/lib/grafana
+    ports:
+      - "3001:3000"
+
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.2
     hostname: zookeeper
@@ -242,6 +267,9 @@ volumes:
   neo4j-logs:
   neo4j-import:
   neo4j-plugins:
+  zipkin-data:
+  prometheus-data:
+  grafana-data:
   zookeeper-data:
   zookeeper-logs:
   kafka-data:
