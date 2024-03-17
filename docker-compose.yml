@@ -14,9 +14,12 @@ services:
       context: ${HOME}/IdeaProjects/evaluation/discovery/discoveryClient
     environment:
       EUREKA_URI: http://eureka-server:8761/eureka
+      POSTGRES_HOST: ${POSTGRES_HOST}
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      MONGODB_HOST: ${MONGODB_HOST}
+      NEO4J_HOST: ${NEO4J_HOST}
     depends_on:
       - eureka-server
       - postgres
@@ -85,6 +88,16 @@ services:
     volumes:
       - zipkin-data:/data
 
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.96.0-arm64
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
+    command: [ "--config=/etc/otel-collector-config.yaml" ]
+    ports:
+      - "4317:4317" # Default OTLP gRPC receiver port
+      - "4318:4318" # Default OTLP HTTP receiver port
+      - "9095:9095" # Prometheus exporter port for Prometheus to scrape
+
   prometheus:
     image: prom/prometheus:v2.49.1
     volumes:
@@ -124,6 +137,7 @@ services:
       - zookeeper
     ports:
       - "9101:9101"
+      - "9092:9092"
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'

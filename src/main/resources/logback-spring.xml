@@ -17,9 +17,9 @@
                 "id": "%X{request_id:-UNKNOWN}",
                 "sourceSystem": "%X{request_source_system:-UNKNOWN}"
             },
-            "dd": {
-                "trace_id": "%X{dd.trace_id:-UNKNOWN}",
-                "span_id": "%X{dd.span_id:-UNKNOWN}"
+            "otel": {
+                "traceId": "%X{trace_id:-UNKNOWN}",
+                "spanId": "%X{span_id:-UNKNOWN}"
             },
             "message": "%msg",
             "timestamp": "%d{HH:mm:ss.SSS}",
