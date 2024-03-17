@@ -32,11 +32,23 @@ services:
     build:
       context: ${HOME}/IdeaProjects/evaluation/discovery/feign
     environment:
-      - EUREKA_URI=http://eureka-server:8761/eureka
+      EUREKA_URI: http://eureka-server:8761/eureka
     depends_on:
       - eureka-client
     ports:
       - "8079:8079"
+    volumes:
+      - maven-repo:/root/.m2/repository
+
+  api-gateway:
+    build:
+      context: ${HOME}/IdeaProjects/evaluation/discovery/apiGateway
+    environment:
+      EUREKA_URI: http://eureka-server:8761/eureka
+    depends_on:
+      - eureka-client
+    ports:
+      - "8077:8077"
     volumes:
       - maven-repo:/root/.m2/repository
 
