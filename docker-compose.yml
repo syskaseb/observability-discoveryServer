@@ -62,8 +62,15 @@ services:
       - "5432:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
-      - ./postgresql.conf:/var/lib/postgresql/data/postgresql.conf
-      - ./pg_hba.conf:/var/lib/postgresql/data/pg_hba.conf
+      - ./postgresql.conf:/etc/postgresql/postgresql.conf
+      - ./pg_hba.conf:/etc/postgresql/pg_hba.conf
+
+    command:
+      - postgres
+      - "-c"
+      - "config_file=/etc/postgresql/postgresql.conf"
+      - "-c"
+      - "hba_file=/etc/postgresql/pg_hba.conf"
 
   redis:
     image: redis:7.2
