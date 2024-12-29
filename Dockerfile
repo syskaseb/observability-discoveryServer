@@ -6,7 +6,7 @@ COPY . .
 
 RUN mvn package
 
-FROM openjdk:17-jdk-slim
+FROM azul/zulu-openjdk-alpine:17-jre-headless
 
 WORKDIR /app
 
