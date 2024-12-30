@@ -4,6 +4,10 @@ WORKDIR /app
 
 COPY . .
 
+ARG OTEL_AGENT_VERSION=2.11.0
+ARG OTEL_AGENT_URL=https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v${OTEL_AGENT_VERSION}/opentelemetry-javaagent.jar
+ARG OTEL_AGENT_SHA256=4cff4ab46179260a61fc0d884f3f170cfbd9d2962dd260be2cff31262d0c7618
+
 RUN apt update && apt install -y wget && rm -rf /var/lib/apt/lists/* && \
     wget -O opentelemetry-javaagent.jar ${OTEL_AGENT_URL} --tries=3 --retry-connrefused --no-check-certificate && \
     echo "${OTEL_AGENT_SHA256} opentelemetry-javaagent.jar" | sha256sum -c -
