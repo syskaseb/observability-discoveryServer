@@ -4,7 +4,11 @@ WORKDIR /app
 
 COPY . .
 
-RUN mvn package
+RUN apt update && apt install -y wget && rm -rf /var/lib/apt/lists/* && \
+    wget -O opentelemetry-javaagent.jar ${OTEL_AGENT_URL} --tries=3 --retry-connrefused --no-check-certificate && \
+    echo "${OTEL_AGENT_SHA256} opentelemetry-javaagent.jar" | sha256sum -c -
+
+RUN mvn clean package
 
 FROM azul/zulu-openjdk-alpine:17-jre-headless
 
