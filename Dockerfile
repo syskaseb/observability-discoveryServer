@@ -14,7 +14,7 @@ RUN apt update && apt install -y wget && rm -rf /var/lib/apt/lists/* && \
 
 RUN mvn clean package
 
-FROM azul/zulu-openjdk-alpine:17-jre-headless
+FROM openjdk:17-jdk-slim
 
 WORKDIR /app
 
